@@ -29,6 +29,9 @@ app = Flask(__name__)
 #     return jsonify(response)
 
 
+@app.route('/', methods = ["POST"])
+def home():
+    return "Hello World"
 
 @app.route('/payment/initiate', methods = ["POST"])
 def bvn_verification():
