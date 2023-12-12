@@ -29,7 +29,7 @@ app = Flask(__name__)
 #     return jsonify(response)
 
 
-@app.route('/', methods = ["POST"])
+@app.route('/', methods = ["GET"])
 def home():
     return "Hello World"
 
