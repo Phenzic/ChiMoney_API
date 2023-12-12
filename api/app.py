@@ -1,71 +1,45 @@
 from flask import Flask, request, jsonify
 import requests
+import os
 
 app = Flask(__name__)
 
-# @app.route('/payment/initiate', methods=['POST'])
-# def initiate_payment():
-#     # Get the JSON payload from the request
-#     request_payload = request.get_json()
-
-#     # Access the values from the payload
-#     value_in_usd = request_payload.get('valueInUSD')
-#     payer_email = request_payload.get('payerEmail')
-#     currency = request_payload.get('currency')
-#     amount = request_payload.get('amount')
-#     redirect_url = request_payload.get('redirect_url')
-
-#     # Simulate the Chimoney API response
-#     response = {
-#         "status": "success",
-#         "message": "Payment initiated successfully",
-#         "valueInUSD": value_in_usd,
-#         "payerEmail": payer_email,
-#         "currency": currency,
-#         "amount": amount,
-#         "redirect_url": redirect_url
-#     }
-
-#     return jsonify(response)
 
 
-@app.route('/', methods = ["GET"])
-def home():
-    return "Hello World"
 
 @app.route('/payment/initiate', methods = ["POST"])
-def bvn_verification():
+def payment():
     try:
         # Get the JSON payload from the request
-        # request_payload = request.get_json()
+        # request_payload = request.get["payload"]
 
         # Access the values from the payload
-        # value_in_usd = request_payload.get('valueInUSD')
-        # payer_email = request_payload.get('payerEmail')
-        # currency = request_payload.get('currency')
-        # amount = request_payload.get('amount')
-        # redirect_url = request_payload.get('redirect_url')
-
+        value_in_usd = request.form.get('valueInUSD')
+        payer_email = request.form.get('payerEmail')
+        currency = request.form.get('currency')
+        amount = request.form.get('amount')
+        redirect_url = request.form.get('redirect_url')
+        print(value_in_usd)
 
         url = "https://api-v2-sandbox.chimoney.io/v0.2/payment/initiate"
 
         payload = {
-            "valueInUSD": 100,
-            "payerEmail": "ogungbolamayowa@gmail.com",
-            "currency": "NGN",
-            "amount": "10",
-            "redirect_url": "https://www.linkedin.com/feed/?nis=true&&lipi=urn%3Ali%3Apage%3Ad_flagship3_notifications%3BZc4DqQVrSd6UtszozgIvVQ%3D%3D"
+            "valueInUSD": value_in_usd,
+            "payerEmail": payer_email,
+            "currency": currency,
+            "amount": amount,
+            "redirect_url": redirect_url
         }
         headers = {
             "accept": "application/json",
             "content-type": "application/json",
-            "X-API-KEY": "8fab3b70b9c800b0b16881f8f7c061af0d50ecd46956615e16f9b56664b9393a"
+            "X-API-KEY": os.environ.get("API_KEY")
             # "X-API-KEY": "821ae70751f3e07be57a887ad61823b39c9faf1211c72d6ba62e2661d752b8da"
         }
 
         response = requests.post(url, json=payload, headers=headers)
 
-        print(response.text)
+        print(response) 
         
 
 #      response = requests.post(url, headers=headers, json=data)
@@ -79,24 +53,31 @@ def bvn_verification():
         return (e)
     
 
+
+@app.route('/', methods = ["GET"])
+def home():
+    return "Hello World"
+
+
 @app.route('/payment/verify', methods = ["POST"])
 def verify_payment():
-    url = "https://api-v2-sandbox.chimoney.io/v0.2/payment/verify"
-    headers = {
-        "accept": "application/json",
-        "content-type": "application/json",
-        "X-API-KEY": "821ae70751f3e07be57a887ad61823b39c9faf1211c72d6ba62e2661d752b8da"
-    }
-    payload = {
-        "id": "DD73z2GXyWU4DuvJeRKGoHEoLFN2_100_1702406095792"
-        # "id": "PhazoiV7gIZdbCVf1fskYFqUepq2_100_1702407560647"
-    }
-    
     try:
-
+        url = "https://api-v2-sandbox.chimoney.io/v0.2/payment/verify"
+        headers = {
+            "accept": "application/json",
+            "content-type": "application/json",
+            "X-API-KEY": os.environ.get("API_KEY")
+        }
+        issueId  = request.form.get("id")
+        print(issueId)
+        payload = {
+            "id": issueId
+        }
+        # issueId = payload
+        
         response = requests.post(url, json=payload, headers=headers)
 
-        print(response.text)
+        print(response)
         
 
         response_data = response.json()
