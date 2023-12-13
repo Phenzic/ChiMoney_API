@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
 import requests
 import os
+from flask_cors import CORS
+
 
 app = Flask(__name__)
 
-
+CORS(app, supports_credentials=True, origins=["https://homestel.vercel.app", "http://127.0.0.1:5000", "http://127.0.0.1:5173", "https://www.bioentrust.net"])
 
 
 @app.route('/payment/initiate', methods = ["POST"])
